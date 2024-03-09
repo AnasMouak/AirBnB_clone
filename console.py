@@ -17,6 +17,14 @@ import ast
 
 
 class HBNBCommand(cmd.Cmd):
+    """Command interpreter for HolbertonBnB application.
+
+    Manages entities via console with predefined commands.
+
+    Attributes:
+        prompt (str): Command prompt symbol.
+        classes (dict): Mapping of class names to classes.
+    """
     prompt = '(hbnb) '
     classes = {
         "BaseModel": BaseModel,
@@ -249,4 +257,3 @@ class HBNBCommand(cmd.Cmd):
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
-
