@@ -134,11 +134,16 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, arg):
         """
-        Updates an instance by adding or updating attribute.
+        Updates an instance by adding or
+        updating an attribute or multiple attributes via a dictionary.
+        ----------------
         Usage: update <class name> <id> <attribute name> "<attribute value>"
+        update <class name> <id> <dictionary of attributes>
+        ----------------
         Example: update User 1234-1234-1234 email "contact@yassine.fun"
+        update User 1234-1234-1234 '{"email": "c@yassine.fun", "name": "Yass"}'
         """
-        args = arg.split(" ", 3)
+        args = arg.split(" ", 2)
         if not args or args[0] == "":
             print("** class name missing **")
             return
@@ -152,18 +157,37 @@ class HBNBCommand(cmd.Cmd):
         if key not in storage.all():
             print("** no instance found **")
             return
-        if len(args) < 3 or args[2] == "":
-            print("** attribute name missing **")
-            return
-        if len(args) < 4:
-            print("** value missing **")
-            return
+
+        if (len(args) == 3 and args[2].startswith("{") and
+                args[2].endswith("}")):
+            try:
+                attr_dict = ast.literal_eval(args[2])
+                if not isinstance(attr_dict, dict):
+                    raise ValueError("** value is not a dictionary **")
+                for attr_name, attr_value in attr_dict.items():
+                    self.apply_update(key, attr_name, attr_value)
+            except (ValueError, SyntaxError) as e:
+                print(e)
+        elif len(args) == 3:
+            attr_args = args[2].split(" ", 1)
+            if len(attr_args) < 2:
+                print("** attribute name or value missing **")
+                return
+            attr_name, attr_value_str = attr_args[0], attr_args[1]
+            try:
+                attr_value = ast.literal_eval(attr_value_str)
+            except (ValueError, SyntaxError):
+                attr_value = attr_value_str.strip("\"")
+            self.apply_update(key, attr_name, attr_value)
+        else:
+            print("** Unknown error **")
+
+    def apply_update(self, key, attr_name, attr_value):
+        """Helper method to apply update to an instance."""
         obj = storage.all()[key]
-        try:
-            attr_value = ast.literal_eval(args[3])
-        except (ValueError, SyntaxError):
-            attr_value = args[3].strip("\"")
-        setattr(obj, args[2], attr_value)
+        if isinstance(attr_value, str) and not attr_value.isdigit():
+            attr_value = attr_value.strip("\"")
+        setattr(obj, attr_name, attr_value)
         obj.save()
 
     def do_count(self, arg):
@@ -187,32 +211,58 @@ class HBNBCommand(cmd.Cmd):
         print(count)
 
     def default(self, line):
-        """Handles unrecognized commands. Shows syntax error."""
-        if ".create()" in line:
-            print("*** Unknown syntax: {}".format(line))
-            return
+        """Handles unrecognized commands, including update from dictionary."""
+        single_update_pattern = re.compile(
+            r'^(\w+)\.update\("([^"]+)", "([^"]+)", (?:\"([^"]*)\"|(\d+))\)$'
+        )
+        dict_update_pattern = re.compile(
+            r'^(\w+)\.update\("([^"]+)", ({.*})\)$'
+        )
 
-        try:
-            cls_name, command, arguments = self.parse_line(line)
-            if cls_name not in self.classes:
-                print("** class doesn't exist **")
+        match_single = single_update_pattern.match(line)
+        match_dict = dict_update_pattern.match(line)
+
+        if match_single:
+            groups = match_single.groups()
+            cls_name, obj_id, attribute_name, attribute_value = groups[:4]
+            non_string_value = groups[4]
+            if non_string_value is not None:
+                attribute_value = non_string_value
+            if cls_name in self.classes:
+                update_cmd = (
+                    f'{cls_name} {obj_id} {attribute_name} "{attribute_value}"'
+                )
+                self.do_update(update_cmd)
+        elif match_dict:
+            cls_name, obj_id, dict_arg = match_dict.groups()
+            update_cmd = f'{cls_name} {obj_id} {dict_arg}'
+            self.do_update(update_cmd)
+        else:
+            if ".create()" in line:
+                print(f"*** Unknown syntax: {line} ***")
                 return
 
-            arguments_clean = arguments.replace('\"', '')
-            args_list = arguments_clean.split(',')
+            try:
+                cls_name, command, arguments = self.parse_line(line)
+                if cls_name not in self.classes:
+                    print("** class doesn't exist **")
+                    return
 
-            if command in ["show", "destroy"]:
-                command_func = getattr(self, f'do_{command}', None)
-                if command_func:
-                    command_func(f"{cls_name} {' '.join(args_list)}")
-            elif command == "count":
-                self.do_count(cls_name)
-            elif command in ["all", "create", "update"]:
-                self.onecmd(f"{command} {cls_name} {' '.join(args_list)}")
-            else:
-                print(f"*** Unknown syntax: {line} ***")
-        except ValueError:
-            print("** class doesn't exist **")
+                arguments_clean = arguments.replace('\"', '')
+                args_list = arguments_clean.split(',')
+
+                if command in ["show", "destroy"]:
+                    command_func = getattr(self, f'do_{command}', None)
+                    if command_func:
+                        command_func(f"{cls_name} {' '.join(args_list)}")
+                elif command == "count":
+                    self.do_count(cls_name)
+                elif command in ["all", "create", "update"]:
+                    self.onecmd(f"{command} {cls_name} {' '.join(args_list)}")
+                else:
+                    print(f"*** Unknown syntax: {line} ***")
+            except ValueError:
+                print("** class doesn't exist **")
 
     def parse_line(self, line):
         """Parses input to retrieve class name, command, and arguments."""
