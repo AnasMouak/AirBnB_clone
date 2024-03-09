@@ -98,18 +98,20 @@ class HBNBCommand(cmd.Cmd):
         """
         args = arg.split()
         if len(args) == 0:
+            print("** class name missing **")
+            return
+        if args[0] not in self.classes:
             print("** class doesn't exist **")
-        elif args[0] not in self.classes:
-            print("** class doesn't exist **")
-        elif len(args) == 1:
+            return
+        if len(args) < 2:
             print("** instance id missing **")
+            return
+        key = f"{args[0]}.{args[1]}"
+        if key not in storage.all():
+            print("** no instance found **")
         else:
-            key = f"{args[0]}.{args[1]}"
-            if key not in storage.all():
-                print("** no instance found **")
-            else:
-                del storage.all()[key]
-                storage.save()
+            del storage.all()[key]
+            storage.save()
 
     def do_all(self, arg):
         """
