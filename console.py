@@ -144,43 +144,45 @@ class HBNBCommand(cmd.Cmd):
         update User 1234-1234-1234 '{"email": "c@yassine.fun", "name": "Yass"}'
         """
         args = arg.split(" ", 2)
-        if not args or args[0] == "":
+        if len(args) < 1:
             print("** class name missing **")
             return
         if args[0] not in self.classes:
             print("** class doesn't exist **")
             return
-        if len(args) < 2 or args[1] == "":
+        if len(args) < 2:
             print("** instance id missing **")
             return
         key = "{}.{}".format(args[0], args[1])
         if key not in storage.all():
             print("** no instance found **")
             return
-
-        if (len(args) == 3 and args[2].startswith("{") and
-                args[2].endswith("}")):
+        if len(args) < 3:
+            print("** attribute name missing **")
+            return
+        if args[2].startswith("{") and args[2].endswith("}"):
             try:
                 attr_dict = ast.literal_eval(args[2])
-                if not isinstance(attr_dict, dict):
-                    raise ValueError("** value is not a dictionary **")
                 for attr_name, attr_value in attr_dict.items():
+                    if attr_name in ['id', 'created_at', 'updated_at']:
+                        continue
                     self.apply_update(key, attr_name, attr_value)
-            except (ValueError, SyntaxError) as e:
-                print(e)
-        elif len(args) == 3:
+            except Exception as e:
+                print("** invalid dictionary **")
+                return
+        else:
             attr_args = args[2].split(" ", 1)
             if len(attr_args) < 2:
-                print("** attribute name or value missing **")
+                print("** value missing **")
                 return
             attr_name, attr_value_str = attr_args[0], attr_args[1]
+            if attr_name in ['id', 'created_at', 'updated_at']:
+                return
             try:
                 attr_value = ast.literal_eval(attr_value_str)
             except (ValueError, SyntaxError):
                 attr_value = attr_value_str.strip("\"")
             self.apply_update(key, attr_name, attr_value)
-        else:
-            print("** Unknown error **")
 
     def apply_update(self, key, attr_name, attr_value):
         """Helper method to apply update to an instance."""
