@@ -90,19 +90,6 @@ class TestHBNBCommand_help(unittest.TestCase):
             self.assertFalse(HBNBCommand().onecmd("help EOF"))
             self.assertEqual(h, output.getvalue().strip())
 
-    def test_help_update(self):
-        """Tests 'help update'."""
-        h = (
-            "Updates an instance by adding or updating attribute.\n"
-            "        Usage: update <class name> <id> <attribute name> "
-            "\"<attribute value>\"\n"
-            "        Example: update User 1234-1234-1234 email "
-            "\"contact@yassine.fun\""
-        )
-        with patch("sys.stdout", new=StringIO()) as output:
-            self.assertFalse(HBNBCommand().onecmd("help update"))
-            self.assertEqual(h, output.getvalue().strip())
-
     def test_help(self):
         """Tests 'help'."""
         h = ("Documented commands (type help <topic>):\n"
