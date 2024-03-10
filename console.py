@@ -144,7 +144,7 @@ class HBNBCommand(cmd.Cmd):
         update User 1234-1234-1234 '{"email": "c@yassine.fun", "name": "Yass"}'
         """
         args = arg.split(" ", 2)
-        if len(args) < 1:
+        if not args[0]:
             print("** class name missing **")
             return
         if args[0] not in self.classes:
