@@ -486,14 +486,15 @@ class TestHBNBCommand_destroy(unittest.TestCase):
         storage.reload()
 
     def test_destroy_missing_class(self):
-        expected_output = "** class doesn't exist **"
+        expected_output_missing_class_name = "** class name missing **"
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd("destroy"))
             ao = output.getvalue().strip()
             self.assertEqual(
                 expected_output, ao,
                 msg=f"Expected: {expected_output}\nActual: {ao}")
-
+        
+        expected_output_class_doesnt_exist = "** class doesn't exist **"
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd(".destroy()"))
             ao = output.getvalue().strip()
