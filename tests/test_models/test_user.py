@@ -187,4 +187,3 @@ class TestUser_to_dict(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
