@@ -241,7 +241,7 @@ class HBNBCommand(cmd.Cmd):
             self.do_update(update_cmd)
         else:
             if ".create()" in line:
-                print(f"*** Unknown syntax: {line} ***")
+                print(f"*** Unknown syntax: {line} ")
                 return
 
             try:
