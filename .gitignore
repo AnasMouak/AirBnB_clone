@@ -1,2 +1,2 @@
 # Ignore Python compiled bytecode directories
-_pycache_/
+__pycache__/
