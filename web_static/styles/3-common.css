@@ -1,0 +1,7 @@
+body {
+    margin: 0; /* Remove default body margin */
+    padding: 0; /* Remove default body padding */
+    color: #484848; /* Set global font color */
+    font-size: 14px; /* Set global font size */
+    font-family: Circular, "Helvetica Neue", Helvetica, Arial, sans-serif; /* Set global font family */
+}

@@ -1,0 +1,9 @@
+footer {
+    background-color: #00FF00; /* Green footer */
+    height: 60px; /* Footer height */
+    width: 100%; /* Footer full width */
+    position: absolute; /* Position footer absolutely */
+    bottom: 0; /* Stick footer to the bottom of the page */
+    text-align: center; /* Center text horizontally */
+    line-height: 60px; /* Center text vertically */
+}

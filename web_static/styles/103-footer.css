@@ -1,0 +1,27 @@
+/* Styles for the footer element */
+footer {
+    background-color: white;
+    height: 60px;
+    width: 100%;
+    border-top: 1px solid #CCCCCC;
+    line-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+}
+
+/* Improve keyboard accessibility for links in the footer */
+footer a {
+    color: #222222;
+    text-decoration: none;
+}
+
+/* Styles for smaller screens */
+@media only screen and (max-width: 600px) {
+    footer {
+        height: 40px;
+        line-height: 40px;
+    }
+}

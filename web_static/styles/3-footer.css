@@ -1,0 +1,11 @@
+footer {
+    background-color: white; /* Set footer background color */
+    height: 60px; /* Set footer height */
+    width: 100%; /* Set footer full width */
+    border-top: 1px solid #CCCCCC; /* Add top border */
+    line-height: 60px; /* Center text vertically */
+    position: fixed; /* Position footer fixed */
+    display: flex;  /* Display flex */
+    bottom: 0; /* Stick footer to the bottom of the page */
+    justify-content: center;
+}

@@ -1,0 +1,13 @@
+header {
+    background-color: white; /* Set header background color */
+    height: 70px; /* Set header height */
+    width: 100%; /* Set header full width */
+    border-bottom: 1px solid #CCCCCC; /* Add bottom border */
+}
+
+.logo {
+    background-image: url("../images/logo.png"); /* Set logo image */
+    background-repeat: no-repeat; /* Prevent logo image from repeating */
+    background-position: 20px center; /* Position logo image with 20px left spacing and vertically centered */
+    height: 100%; /* Make logo container full height of the header */
+}
